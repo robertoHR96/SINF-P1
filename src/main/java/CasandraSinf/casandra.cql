@@ -22,7 +22,7 @@ create table if not exists paquetes(
                                        precio decimal,
                                        PRIMARY KEY ( paquete_id )
 );
-//insert into paquetes (paquete_id, nombre, destino_id, duracion, precio) values (uuid(), 'Destino 1', 6ea6130e-c0a7-4d85-bd86-79df2e05dae4, 10, 999 );
+//insert into paquetes (paquete_id, nombre, destino_id, duracion, precio) values (uuid(), 'Destino 2', 6ea6130e-c0a7-4d85-bd86-79df2e05dae4, 10, 999.89 );
 select * from paquetes;
 
 //select * from paquetes where paquete_id=45f5342f-e868-46b0-a816-20ea6c53a112;

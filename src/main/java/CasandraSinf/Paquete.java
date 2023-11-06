@@ -1,5 +1,6 @@
 package CasandraSinf;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Paquete {
@@ -7,7 +8,7 @@ public class Paquete {
     private String nombre;
     private String destino_id;
     private Integer duracion;
-    private float precio;
+    private BigDecimal precio;
 
 
     public Paquete() {
@@ -15,9 +16,9 @@ public class Paquete {
         this.nombre = "";
         this.destino_id = "";
         this.duracion = 0;
-        this.precio = 0;
+        this.precio = new BigDecimal(0);
     }
-    public Paquete(String paquete_id, String nombre, String destino_id, Integer duracion, float precio) {
+    public Paquete(String paquete_id, String destino_id, Integer duracion, String nombre, BigDecimal precio) {
         this.paquete_id = paquete_id;
         this.nombre = nombre;
         this.destino_id = destino_id;
@@ -57,11 +58,11 @@ public class Paquete {
         this.duracion = duracion;
     }
 
-    public float getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(float precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 
@@ -69,7 +70,7 @@ public class Paquete {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Paquete paquete)) return false;
-        return Float.compare(paquete.getPrecio(), getPrecio()) == 0 && Objects.equals(getPaquete_id(), paquete.getPaquete_id()) && Objects.equals(getNombre(), paquete.getNombre()) && Objects.equals(getDestino_id(), paquete.getDestino_id()) && Objects.equals(getDuracion(), paquete.getDuracion());
+        return Objects.equals(getPaquete_id(), paquete.getPaquete_id()) && Objects.equals(getNombre(), paquete.getNombre()) && Objects.equals(getDestino_id(), paquete.getDestino_id()) && Objects.equals(getDuracion(), paquete.getDuracion()) && Objects.equals(getPrecio(), paquete.getPrecio());
     }
 
     @Override
