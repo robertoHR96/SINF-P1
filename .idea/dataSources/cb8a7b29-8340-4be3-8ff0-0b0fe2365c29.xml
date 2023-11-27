@@ -8,19 +8,19 @@
       <CanLogin>1</CanLogin>
       <SuperRole>1</SuperRole>
     </role>
-    <schema id="3" parent="1" name="system_auth">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
-</Properties>
-    </schema>
-    <schema id="4" parent="1" name="system_schema">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
-</Properties>
-    </schema>
-    <schema id="5" parent="1" name="system_distributed">
+    <schema id="3" parent="1" name="cassandrap1">
       <Properties>durable_writes:true
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
+</Properties>
+    </schema>
+    <schema id="4" parent="1" name="cassandrasinf">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
+</Properties>
+    </schema>
+    <schema id="5" parent="1" name="simplex">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
 </Properties>
     </schema>
     <schema id="6" parent="1" name="system">
@@ -28,33 +28,33 @@ replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrateg
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
 </Properties>
     </schema>
-    <schema id="7" parent="1" name="system_traces">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;2&apos;}
-</Properties>
-    </schema>
-    <schema id="8" parent="1" name="simplex">
+    <schema id="7" parent="1" name="system_auth">
       <Properties>durable_writes:true
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
 </Properties>
     </schema>
-    <schema id="9" parent="1" name="system_virtual_schema">
-      <Virtual>1</Virtual>
-    </schema>
-    <schema id="10" parent="1" name="system_views">
-      <Virtual>1</Virtual>
-    </schema>
-    <schema id="11" parent="1" name="cassandrap1">
+    <schema id="8" parent="1" name="system_distributed">
       <Properties>durable_writes:true
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
 </Properties>
     </schema>
-    <schema id="12" parent="1" name="cassandrasinf">
+    <schema id="9" parent="1" name="system_schema">
       <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
 </Properties>
     </schema>
-    <table id="13" parent="11" name="clientes">
+    <schema id="10" parent="1" name="system_traces">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;2&apos;}
+</Properties>
+    </schema>
+    <schema id="11" parent="1" name="system_views">
+      <Virtual>1</Virtual>
+    </schema>
+    <schema id="12" parent="1" name="system_virtual_schema">
+      <Virtual>1</Virtual>
+    </schema>
+    <table id="13" parent="3" name="clientes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -72,7 +72,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="14" parent="11" name="destinos">
+    <table id="14" parent="3" name="destinos">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -90,7 +90,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="15" parent="11" name="paquetes">
+    <table id="15" parent="3" name="paquetes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -108,7 +108,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="16" parent="11" name="reservas">
+    <table id="16" parent="3" name="reservas">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -126,7 +126,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="17" parent="12" name="clientes">
+    <table id="17" parent="4" name="clientes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -144,7 +144,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="18" parent="12" name="destinos">
+    <table id="18" parent="4" name="destinos">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -162,7 +162,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="19" parent="12" name="paquetes">
+    <table id="19" parent="4" name="paquetes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -180,7 +180,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="20" parent="12" name="reservas">
+    <table id="20" parent="4" name="reservas">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -214,191 +214,206 @@ additional_write_policy:99p
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <key id="25" parent="13" name="primary key">
+    <index id="25" parent="13" name="clientes_correo_electronico_idx">
+      <Columns>correo_electronico</Columns>
+    </index>
+    <key id="26" parent="13" name="primary key">
       <Columns>cliente_id
 </Columns>
     </key>
-    <column id="26" parent="14" name="destino_id">
+    <column id="27" parent="14" name="destino_id">
       <DasType>uuid|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="27" parent="14" name="clima">
+    <column id="28" parent="14" name="clima">
       <DasType>text|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="28" parent="14" name="descripcion">
+    <column id="29" parent="14" name="descripcion">
       <DasType>text|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="29" parent="14" name="nombre">
+    <column id="30" parent="14" name="nombre">
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="30" parent="14" name="pais">
+    <column id="31" parent="14" name="pais">
       <DasType>text|0s</DasType>
       <Position>5</Position>
     </column>
-    <key id="31" parent="14" name="primary key">
+    <index id="32" parent="14" name="destino_id">
+      <Columns>clima</Columns>
+    </index>
+    <index id="33" parent="14" name="pais_id">
+      <Columns>pais</Columns>
+    </index>
+    <key id="34" parent="14" name="primary key">
       <Columns>destino_id
 </Columns>
     </key>
-    <column id="32" parent="15" name="paquete_id">
+    <column id="35" parent="15" name="paquete_id">
       <DasType>uuid|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="33" parent="15" name="destino_id">
+    <column id="36" parent="15" name="destino_id">
       <DasType>uuid|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="34" parent="15" name="duracion">
+    <column id="37" parent="15" name="duracion">
       <DasType>int|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="35" parent="15" name="nombre">
+    <column id="38" parent="15" name="nombre">
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="36" parent="15" name="precio">
+    <column id="39" parent="15" name="precio">
       <DasType>decimal|0s</DasType>
       <Position>5</Position>
     </column>
-    <index id="37" parent="15" name="paquetes_por_destinos">
+    <index id="40" parent="15" name="paquetes_por_destinos">
       <Columns>destino_id</Columns>
     </index>
-    <key id="38" parent="15" name="primary key">
+    <index id="41" parent="15" name="paquetes_por_nombres">
+      <Columns>nombre</Columns>
+    </index>
+    <key id="42" parent="15" name="primary key">
       <Columns>paquete_id
 </Columns>
     </key>
-    <column id="39" parent="16" name="reserva_id">
+    <column id="43" parent="16" name="reserva_id">
       <DasType>uuid|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="40" parent="16" name="cliente_id">
+    <column id="44" parent="16" name="cliente_id">
       <DasType>uuid|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="41" parent="16" name="fecha_fin">
+    <column id="45" parent="16" name="fecha_fin">
       <DasType>date|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="42" parent="16" name="fecha_inicio">
+    <column id="46" parent="16" name="fecha_inicio">
       <DasType>date|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="43" parent="16" name="pagado">
+    <column id="47" parent="16" name="pagado">
       <DasType>boolean|0s</DasType>
       <Position>5</Position>
     </column>
-    <column id="44" parent="16" name="paquete_id">
+    <column id="48" parent="16" name="paquete_id">
       <DasType>uuid|0s</DasType>
       <Position>6</Position>
     </column>
-    <index id="45" parent="16" name="destino_por_usuario">
+    <index id="49" parent="16" name="destino_por_usuario">
       <Columns>cliente_id</Columns>
     </index>
-    <key id="46" parent="16" name="primary key">
+    <index id="50" parent="16" name="cliente_por_fehcas">
+      <Columns>fecha_inicio</Columns>
+    </index>
+    <index id="51" parent="16" name="reserva_por_pagado">
+      <Columns>pagado</Columns>
+    </index>
+    <key id="52" parent="16" name="primary key">
       <Columns>reserva_id
 </Columns>
     </key>
-    <column id="47" parent="17" name="cliente_id">
+    <column id="53" parent="17" name="cliente_id">
       <DasType>int|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="48" parent="17" name="correo_electronico">
+    <column id="54" parent="17" name="correo_electronico">
       <DasType>text|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="49" parent="17" name="nombre">
+    <column id="55" parent="17" name="nombre">
       <DasType>text|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="50" parent="17" name="telefono">
+    <column id="56" parent="17" name="telefono">
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <key id="51" parent="17" name="primary key">
+    <key id="57" parent="17" name="primary key">
       <Columns>cliente_id
 </Columns>
     </key>
-    <column id="52" parent="18" name="destino_id">
+    <column id="58" parent="18" name="destino_id">
       <DasType>int|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="53" parent="18" name="clima">
+    <column id="59" parent="18" name="clima">
       <DasType>text|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="54" parent="18" name="descripcion">
+    <column id="60" parent="18" name="descripcion">
       <DasType>text|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="55" parent="18" name="nombre">
+    <column id="61" parent="18" name="nombre">
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="56" parent="18" name="pais">
+    <column id="62" parent="18" name="pais">
       <DasType>text|0s</DasType>
       <Position>5</Position>
     </column>
-    <key id="57" parent="18" name="primary key">
+    <key id="63" parent="18" name="primary key">
       <Columns>destino_id
 </Columns>
     </key>
-    <column id="58" parent="19" name="paquete_id">
+    <column id="64" parent="19" name="paquete_id">
       <DasType>int|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="59" parent="19" name="destino_id">
+    <column id="65" parent="19" name="destino_id">
       <DasType>int|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="60" parent="19" name="duracion">
+    <column id="66" parent="19" name="duracion">
       <DasType>int|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="61" parent="19" name="nombre">
+    <column id="67" parent="19" name="nombre">
       <DasType>text|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="62" parent="19" name="precio">
+    <column id="68" parent="19" name="precio">
       <DasType>decimal|0s</DasType>
       <Position>5</Position>
     </column>
-    <index id="63" parent="19" name="paquetes_por_destinos">
+    <index id="69" parent="19" name="paquetes_por_destinos">
       <Columns>destino_id</Columns>
     </index>
-    <key id="64" parent="19" name="primary key">
+    <key id="70" parent="19" name="primary key">
       <Columns>paquete_id
 </Columns>
     </key>
-    <column id="65" parent="20" name="reserva_id">
-      <DasType>int|0s</DasType>
+    <column id="71" parent="20" name="reserva_id">
+      <DasType>uuid|0s</DasType>
       <Position>1</Position>
     </column>
-    <column id="66" parent="20" name="cliente_id">
-      <DasType>int|0s</DasType>
+    <column id="72" parent="20" name="cliente_id">
+      <DasType>uuid|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="67" parent="20" name="fecha_fin">
+    <column id="73" parent="20" name="fecha_fin">
       <DasType>date|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="68" parent="20" name="fecha_inicio">
+    <column id="74" parent="20" name="fecha_inicio">
       <DasType>date|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="69" parent="20" name="pagado">
+    <column id="75" parent="20" name="pagado">
       <DasType>boolean|0s</DasType>
       <Position>5</Position>
     </column>
-    <column id="70" parent="20" name="paquete_id">
-      <DasType>int|0s</DasType>
+    <column id="76" parent="20" name="paquete_id">
+      <DasType>uuid|0s</DasType>
       <Position>6</Position>
     </column>
-    <index id="71" parent="20" name="destino_por_usuario">
-      <Columns>cliente_id</Columns>
-    </index>
-    <key id="72" parent="20" name="primary key">
+    <key id="77" parent="20" name="primary key">
       <Columns>reserva_id
 </Columns>
     </key>

@@ -1,5 +1,6 @@
 package CasandraSinf;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,6 +55,31 @@ public class Cassandra implements DataBase {
     @Override
     public void crearDataBase() {
         System.out.println("Cargando datos en la BD de cassandra...");
+        System.out.println();
+        System.out.println("Creando keyspace...");
+        System.out.println();
+        ResultSet resultSet = session.execute("create keyspace if not exists cassandraP1 WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};");
+        resultSet = session.execute("use cassandraP1;");
+        System.out.println("Crando tablas...");
+        System.out.println();
+        resultSet = session.execute("create table if not exists destinos ( destino_id  UUID, nombre text, pais text, descripcion text, clima text, PRIMARY KEY ( destino_id) ); ");
+        resultSet = session.execute("create table if not exists paquetes( paquete_id uuid, nombre text, destino_id uuid, duracion int, precio decimal, PRIMARY KEY ( paquete_id ) ); ");
+        resultSet = session.execute("create table if not exists clientes (cliente_id uuid, nombre text, correo_electronico text, telefono text, primary key ( cliente_id ) ); ");
+        resultSet = session.execute("create table if not exists reservas ( reserva_id uuid, paquete_id uuid, cliente_id uuid, fecha_inicio date, fecha_fin date, pagado boolean, primary key ( reserva_id ) );");
+        System.out.println("Creando indices adicionales...");
+        System.out.println("");
+        resultSet = session.execute("create index if not exists destino_clima on destinos (pais);");
+        resultSet = session.execute("create index if not exists destino_clima on destinos (clima);");
+
+        resultSet = session.execute("create index if not exists paquetes_por_destinos on paquetes (pais);");
+        resultSet = session.execute("create index if not exists paquetes_por_nombres on paquetes (nombre);");
+
+        resultSet = session.execute("create index if not exists destino_por_usuario on reservas (cliente_id);");
+        resultSet = session.execute("create index if not exists cliente_por_fehcas on reservas (fecha_inicio);");
+
+        /*
+        resultSet = session.execute("");
+         */
     }
 
     @Override
@@ -93,13 +119,7 @@ public class Cassandra implements DataBase {
         //results.iterator()
         //results.all()
         if (row != null) {
-            return new Paquete(
-                    row.getUUID(0).toString(),
-                    row.getUUID(1).toString(),
-                    row.getInt(2),
-                    row.getString(3),
-                    row.getDecimal(4)
-            );
+            return new Paquete(row.getUUID(0).toString(), row.getUUID(1).toString(), row.getInt(2), row.getString(3), row.getDecimal(4));
         } else {
             return null; // O algún tipo de manejo para indicar que no se encontró el paquete
         }
@@ -107,17 +127,205 @@ public class Cassandra implements DataBase {
 
     @Override
     public LinkedList<Reserva> reservasByClienteID(String cliente_id) {
-        return null;
+        session.execute("use cassandrap1;");
+
+        ResultSet result = session.execute(" select * from reservas where cliente_id = " + cliente_id + " ;");
+        LinkedList<Reserva> listaReservas = new LinkedList<Reserva>();
+        for (Row row : result) {
+            listaReservas.add(new Reserva(
+                    row.getUUID(0).toString(),
+                    row.getUUID(1).toString(),
+                    row.getDate(2).toString(),
+                    row.getDate(3).toString(),
+                    row.getBool(4),
+                    row.getUUID(5).toString()));
+        }
+        return listaReservas;
     }
 
     @Override
     public LinkedList<Paquete> paquetesByDestinoID(String destino_id) {
-        return null;
+        session.execute("use cassandrap1;");
+        ResultSet result = session.execute("select * from paquetes where destino_id = " + destino_id + " ;");
+        LinkedList<Paquete> listaDestinos = new LinkedList<Paquete>();
+        for (Row row : result) {
+            listaDestinos.add(
+                    new Paquete(
+                            row.getUUID(0).toString(),
+                            row.getUUID(1).toString(),
+                            row.getInt(2),
+                            row.getString(3),
+                            row.getDecimal(4)
+                    )
+            );
+        }
+        return listaDestinos;
     }
 
     @Override
     public LinkedList<Cliente> clientesByReservaRngDate(String fecha_inicio, String fecha_fin) {
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("SELECT * FROM reservas WHERE fecha_inicio >= '" + fecha_inicio + "' AND fecha_fin <= '" + fecha_fin + "' allow filtering ;");
+        LinkedList<Cliente> listaClientes = new LinkedList<Cliente>();
+        for (Row row : resultSet) {
+            String cliente_id = "Select * from clientes where cliente_id = " + row.getUUID(1).toString() + " ;";
+            ResultSet rs = session.execute(cliente_id);
+            Row row2 = rs.one();
+            if (anadirCliente(row2.getUUID(0).toString(), listaClientes)) {
+                listaClientes.add(
+                        new Cliente(
+                                row2.getUUID(0).toString(),
+                                row2.getString(1),
+                                row2.getString(2),
+                                row2.getString(3)
+                        )
+                );
+            }
+        }
+        return listaClientes;
+    }
+
+    @Override
+    public LinkedList<Paquete> paquetesByNombre(String nombre) {
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("select * from paquetes where nombre = '" + nombre + "' ;");
+        LinkedList<Paquete> listaPaquetes = new LinkedList<Paquete>();
+        for (Row row : resultSet) {
+            listaPaquetes.add(
+                    new Paquete(
+                            row.getUUID(0).toString(),
+                            row.getUUID(1).toString(),
+                            row.getInt(2),
+                            row.getString(3),
+                            row.getDecimal(4)
+                    )
+            );
+        }
+        return listaPaquetes;
+    }
+
+    @Override
+    public LinkedList<Cliente> clienteResvervasByClima(String clima) {
+        session.execute("use cassandrap1;");
+
+        ResultSet result = session.execute(" select * from reservas ;");
+        LinkedList<Reserva> listaReservas = new LinkedList<Reserva>();
+        LinkedList<Cliente> listaCliente = new LinkedList<Cliente>();
+        for (Row row : result) {
+            Reserva rsv = new Reserva(
+                    row.getUUID(0).toString(),
+                    row.getUUID(1).toString(),
+                    row.getDate(2).toString(),
+                    row.getDate(3).toString(),
+                    row.getBool(4),
+                    row.getUUID(5).toString());
+
+            if (reservaCumpleClima(row.getUUID(5).toString(), clima)) {
+                if (anadirCliente(row.getUUID(1).toString(), listaCliente)) {
+                    Cliente clt = clienteById(row.getUUID(1).toString());
+                    if (clt != null) {
+                        listaCliente.add(clt);
+                    }
+                }
+            }
+        }
+        return listaCliente;
+    }
+
+    @Override
+    public LinkedList<Destino> destinosByPais(String pais) {
+        LinkedList<Destino> listaDestinos = new LinkedList<Destino>();
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("select * from destinos where pais = '" + pais + "' ;");
+        for (Row row : resultSet) {
+            listaDestinos.add(new Destino(row.getUUID(0).toString(), row.getString(3), row.getString(4), row.getString(2), row.getString(1)));
+        }
+        return listaDestinos;
+    }
+
+    @Override
+    public LinkedList<Cliente> clientesByEmail(String mail) {
+        LinkedList<Cliente> listaClientes = new LinkedList<Cliente>();
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("select * from clientes where correo_electronico = '" + mail + "' ;");
+        for (Row row : resultSet) {
+            listaClientes.add(new Cliente(
+                    row.getUUID(0).toString(),
+                    row.getString(1),
+                    row.getString(2),
+                    row.getString(3)
+            ));
+        }
+        return listaClientes;
+    }
+
+    @Override
+    public LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, String duracion) {
+        LinkedList <Paquete> listaPaquetes = new LinkedList<Paquete>();
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("select * from paquetes where destino_id = "+destino_id+" and duracion = '"+duracion+"' ;");
+        for (Row row : resultSet) {
+            listaPaquetes.add(
+                    new Paquete(
+                            row.getUUID(0).toString(),
+                            row.getUUID(1).toString(),
+                            row.getInt(2),
+                            row.getString(3),
+                            row.getDecimal(4)
+                    )
+            );
+        }
+        return listaPaquetes;
+    }
+
+    public Cliente clienteById(String id_cliente) {
+
+        session.execute("use cassandrap1;");
+        ResultSet resultSet = session.execute("select * from clientes where cliente_id =" + id_cliente + " ;");
+        Row row = resultSet.one();
+        if (row != null) {
+            return new Cliente(
+                    row.getUUID(0).toString(),
+                    row.getString(1),
+                    row.getString(2),
+                    row.getString(3)
+            );
+        }
         return null;
+    }
+
+    public boolean reservaCumpleClima(String id_paquete, String clima) {
+        session.execute("use cassandrap1;");
+        ResultSet resultSet = session.execute("select * from paquetes where paquete_id = " + id_paquete + " ;");
+        LinkedList<Paquete> listaPaquetes = new LinkedList<Paquete>();
+        for (Row row : resultSet) {
+            String destino_id = row.getUUID(1).toString();
+            if (destinoConClima(destino_id, clima)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean destinoConClima(String id_destino, String clima) {
+        session.execute("use cassandrap1");
+        ResultSet resultSet = session.execute("select * from destinos where destino_id=" + id_destino + " and clima='" + clima + "' ;");
+        Row row = resultSet.one();
+        if (row != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean anadirCliente(String cId, LinkedList<Cliente> lisCl) {
+        Iterator it = lisCl.iterator();
+        while (it.hasNext()) {
+            Cliente cc = (Cliente) it.next();
+            if (cc.getCliente_id().equals(cId)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

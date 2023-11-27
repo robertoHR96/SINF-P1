@@ -18,7 +18,7 @@ public class Reserva {
         this.fecha_fin = "";
         this.pagado = false;
     }
-    public Reserva(String reserva_id, String paquete_id, String cliente_id, String fecha_inicio, String fecha_fin, boolean pagado) {
+    public Reserva(String reserva_id,  String cliente_id, String fecha_inicio, String fecha_fin, boolean pagado, String paquete_id) {
         this.reserva_id = reserva_id;
         this.paquete_id = paquete_id;
         this.cliente_id = cliente_id;
