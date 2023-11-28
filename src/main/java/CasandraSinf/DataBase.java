@@ -22,5 +22,8 @@ public interface DataBase {
 
     /////////////////////////////
     LinkedList<Cliente> clientesByEmail(String mail);
-    LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, String duracion);
+    LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, int duracion);
+    //Generar un índice compuesto para optimizar la búsqueda de reservas por
+    //cliente, destino y estado de pago.
+    LinkedList<Reserva> reservasByClienteDestinoDuracion(String cliente_id, String destino_id, int duracion);
 }

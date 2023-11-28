@@ -8,19 +8,19 @@
       <CanLogin>1</CanLogin>
       <SuperRole>1</SuperRole>
     </role>
-    <schema id="3" parent="1" name="cassandrap1">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
-</Properties>
-    </schema>
-    <schema id="4" parent="1" name="cassandrasinf">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
-</Properties>
-    </schema>
-    <schema id="5" parent="1" name="simplex">
+    <schema id="3" parent="1" name="system_auth">
       <Properties>durable_writes:true
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
+</Properties>
+    </schema>
+    <schema id="4" parent="1" name="system_schema">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
+</Properties>
+    </schema>
+    <schema id="5" parent="1" name="system_distributed">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
 </Properties>
     </schema>
     <schema id="6" parent="1" name="system">
@@ -28,33 +28,33 @@ replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrateg
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
 </Properties>
     </schema>
-    <schema id="7" parent="1" name="system_auth">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
-</Properties>
-    </schema>
-    <schema id="8" parent="1" name="system_distributed">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
-</Properties>
-    </schema>
-    <schema id="9" parent="1" name="system_schema">
-      <Properties>durable_writes:true
-replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.LocalStrategy&apos;}
-</Properties>
-    </schema>
-    <schema id="10" parent="1" name="system_traces">
+    <schema id="7" parent="1" name="system_traces">
       <Properties>durable_writes:true
 replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;2&apos;}
 </Properties>
     </schema>
-    <schema id="11" parent="1" name="system_views">
+    <schema id="8" parent="1" name="simplex">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;1&apos;}
+</Properties>
+    </schema>
+    <schema id="9" parent="1" name="system_virtual_schema">
       <Virtual>1</Virtual>
     </schema>
-    <schema id="12" parent="1" name="system_virtual_schema">
+    <schema id="10" parent="1" name="system_views">
       <Virtual>1</Virtual>
     </schema>
-    <table id="13" parent="3" name="clientes">
+    <schema id="11" parent="1" name="cassandrap1">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
+</Properties>
+    </schema>
+    <schema id="12" parent="1" name="cassandrasinf">
+      <Properties>durable_writes:true
+replication:{&apos;class&apos;: &apos;org.apache.cassandra.locator.SimpleStrategy&apos;, &apos;replication_factor&apos;: &apos;3&apos;}
+</Properties>
+    </schema>
+    <table id="13" parent="11" name="clientes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -72,7 +72,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="14" parent="3" name="destinos">
+    <table id="14" parent="11" name="destinos">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -90,7 +90,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="15" parent="3" name="paquetes">
+    <table id="15" parent="11" name="paquetes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -108,7 +108,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="16" parent="3" name="reservas">
+    <table id="16" parent="11" name="reservas">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -126,7 +126,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="17" parent="4" name="clientes">
+    <table id="17" parent="12" name="clientes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -144,7 +144,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="18" parent="4" name="destinos">
+    <table id="18" parent="12" name="destinos">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -162,7 +162,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="19" parent="4" name="paquetes">
+    <table id="19" parent="12" name="paquetes">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01
@@ -180,7 +180,7 @@ compaction:{&apos;class&apos;: &apos;org.apache.cassandra.db.compaction.SizeTier
 additional_write_policy:99p
 </Properties>
     </table>
-    <table id="20" parent="4" name="reservas">
+    <table id="20" parent="12" name="reservas">
       <Properties>caching:{&apos;keys&apos;: &apos;ALL&apos;, &apos;rows_per_partition&apos;: &apos;NONE&apos;}
 compression:{&apos;chunk_length_in_kb&apos;: &apos;16&apos;, &apos;class&apos;: &apos;org.apache.cassandra.io.compress.LZ4Compressor&apos;}
 bloom_filter_fp_chance:0.01

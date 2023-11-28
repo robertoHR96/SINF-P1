@@ -260,7 +260,7 @@ public class Cassandra implements DataBase {
     }
 
     @Override
-    public LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, String duracion) {
+    public LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, int duracion) {
         LinkedList <Paquete> listaPaquetes = new LinkedList<Paquete>();
         session.execute("use cassandrap1");
         ResultSet resultSet = session.execute("select * from paquetes where destino_id = "+destino_id+" and duracion = '"+duracion+"' ;");
@@ -276,6 +276,11 @@ public class Cassandra implements DataBase {
             );
         }
         return listaPaquetes;
+    }
+
+    @Override
+    public LinkedList<Reserva> reservasByClienteDestinoDuracion(String cliente_id, String destino_id, int duracion) {
+        return null;
     }
 
     public Cliente clienteById(String id_cliente) {
