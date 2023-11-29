@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26e75d27-3dfd-437e-94cf-3292909f1632" name="Changes" comment="Cassandri 99, mongo rellenar 2">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" afterDir="false" />
+    <list default="true" id="26e75d27-3dfd-437e-94cf-3292909f1632" name="Changes" comment="Cassandri 99, mongo casi fin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/DataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/DataBase.java" afterDir="false" />
@@ -166,7 +165,8 @@
       <workItem from="1699518607954" duration="692000" />
       <workItem from="1701078766445" duration="12542000" />
       <workItem from="1701100368941" duration="15640000" />
-      <workItem from="1701159905422" duration="12905000" />
+      <workItem from="1701159905422" duration="13599000" />
+      <workItem from="1701280252125" duration="4849000" />
     </task>
     <task id="LOCAL-00001" summary="Avances">
       <option name="closed" value="true" />
@@ -200,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701117555361</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Cassandri 99, mongo casi fin">
+      <option name="closed" value="true" />
+      <created>1701174122733</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701174122733</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,6 +229,7 @@
     <MESSAGE value="Avances" />
     <MESSAGE value="Cassandri 99, mongo rellenar" />
     <MESSAGE value="Cassandri 99, mongo rellenar 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cassandri 99, mongo rellenar 2" />
+    <MESSAGE value="Cassandri 99, mongo casi fin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cassandri 99, mongo casi fin" />
   </component>
 </project>

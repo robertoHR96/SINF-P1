@@ -10,7 +10,6 @@ public class Main {
 
     public static void main(String[] args) {
         //Cassandra cs = new Cassandra();
-        cs = new Mongo();
         if(elegirDB()){
             cs = new Mongo();
         }else{
@@ -29,6 +28,7 @@ public class Main {
         } finally {
             cs.close();
         }
+
     }
 
     public static boolean menuOpciones() {
@@ -56,6 +56,7 @@ public class Main {
             System.out.println("16. Salir del programa");
             try {
                 Scanner sc = new Scanner(System.in);
+                System.out.print("Selecione una opcion: ");
                 String seleccion = sc.nextLine();
                 Integer valor = Integer.parseInt(seleccion);
                 if (valor < 0 || valor > 16) {
@@ -167,7 +168,7 @@ public class Main {
     }
 
     public static void opcion4() {
-        try{
+        try {
             System.out.println("---- Lista paquetes para un destino particular ----");
             System.out.print("Seleccione el ID del destino: ");
             Scanner sc = new Scanner(System.in);
@@ -179,13 +180,13 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion5() {
-        try{
+        try {
             System.out.println("---- Lista clientes para reservar en intervalo fechas ----");
             System.out.print("Selecione el intervalo de fechas (Formato: 2021-09-14T07:21:02.641Z)");
             Scanner sc = new Scanner(System.in);
@@ -202,13 +203,13 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion6() {
-        try{
+        try {
             System.out.println("---- Lista paquetes por nombre ----");
             System.out.print("Seleccione el nombre del paquete: ");
             Scanner sc = new Scanner(System.in);
@@ -220,21 +221,21 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion7() {
-        try{
+        try {
 
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion8() {
-        try{
+        try {
             System.out.println("---- cleintes por destino clima ---");
             System.out.print("Seleccione el tipo de clima: ");
             Scanner sc = new Scanner(System.in);
@@ -246,21 +247,38 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion9() {
-        try{
-
-        }catch ( Exception e){
+        try {
+            System.out.println("---- Reserva cliente ragno fechas ----");
+            System.out.print("Selecione el intervalo de fechas (Formato: 2021-09-14T07:21:02.641Z)");
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Fecha inicio: ");
+            System.out.println();
+            String seleccion = sc.nextLine();
+            System.out.print("Fecha fin: ");
+            String seleccion2 = sc.nextLine();
+            System.out.print("Seleciene el id del cliente: ");
+            String seleccion3 = sc.nextLine();
+            System.out.println();
+            LinkedList<Reserva> listaReservas = cs.resservaByClienteRngDate(seleccion3, seleccion, seleccion2);
+            Iterator it = listaReservas.iterator();
+            while (it.hasNext()){
+                Reserva rsv = (Reserva) it.next();
+                System.out.println(rsv.toString());
+            }
+            //resservaByClienteRngDate
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion10() {
-        try{
+        try {
             System.out.println("---- Destinos por pais ----");
             System.out.print("Seleccione el pais: ");
             Scanner sc = new Scanner(System.in);
@@ -272,21 +290,21 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion11() {
-        try{
+        try {
 
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion12() {
-        try{
+        try {
             System.out.println("---- Clientes por mail ----");
             System.out.print("Seleccione el mail del cliente: ");
             Scanner sc = new Scanner(System.in);
@@ -298,21 +316,21 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion13() {
-        try{
+        try {
 
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion14() {
-        try{
+        try {
             Scanner sc = new Scanner(System.in);
             System.out.println("---- paquetes destino duracion ----");
             System.out.print("Selecione el ID del destino: ");
@@ -327,13 +345,13 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     public static void opcion15() {
-        try{
+        try {
             Scanner sc = new Scanner(System.in);
             System.out.println("---- reservas cliente destino duracion ----");
             System.out.print("Selecione el ID del cliente: ");
@@ -350,7 +368,7 @@ public class Main {
             }
             System.out.println();
             System.out.println();
-        }catch ( Exception e){
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }

@@ -17,6 +17,8 @@ public interface DataBase {
 
     LinkedList<Paquete> paquetesByNombre(String nombre);
     LinkedList<Cliente> clienteResvervasByClima(String clima);
+
+    LinkedList<Reserva> resservaByClienteRngDate(String cliente_id, String fecha_inicio, String fecha_fin);
     LinkedList<Destino> destinosByPais(String pais);
 
 

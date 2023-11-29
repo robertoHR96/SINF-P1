@@ -1,16 +1,44 @@
 package CasandraSinf;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import com.github.javafaker.Faker;
 import com.datastax.driver.core.*;
+import com.github.javafaker.Name;
+import org.bson.Document;
 
 public class Cassandra implements DataBase {
     private Cluster cluster;
     private Session session;
+    private String[] nombresPaises = {"Estados Unidos", "Canadá", "México", "Brasil", "Argentina", "Reino Unido", "Francia", "Alemania", "Italia", "España", "Portugal", "Australia", "Japón", "China", "India", "Rusia", "Sudáfrica", "Egipto", "Nigeria", "Kenia", "Corea del Sur", "Indonesia", "Malasia", "Nueva Zelanda", "Países Bajos"};
+    private String[][] ciudadesPorPais = {{"Nueva York", "Los Ángeles"},// Ciudades para Estados Unidos
+            {"Toronto", "Montreal"},// Ciudades para Canadá
+            {"Ciudad de México", "Guadalajara"},// Ciudades para México
+            {"São Paulo", "Río de Janeiro"},// Ciudades para Brasil
+            {"Buenos Aires", "Córdoba"},// Ciudades para Argentina
+            {"Londres", "Manchester"},  // Reino Unido
+            {"París", "Marsella"},      // Francia
+            {"Berlín", "Múnich"},       // Alemania
+            {"Roma", "Milán"},          // Italia
+            {"Madrid", "Barcelona"},    // España
+            {"Lisboa", "Oporto"},       // Portugal
+            {"Sídney", "Melbourne"},    // Australia
+            {"Tokio", "Osaka"},         // Japón
+            {"Pekín", "Shanghái"},      // China
+            {"Nueva Delhi", "Bombay"},  // India
+            {"Moscú", "San Petersburgo"},// Rusia
+            {"Johannesburgo", "Ciudad del Cabo"}, // Sudáfrica
+            {"El Cairo", "Alejandría"}, // Egipto
+            {"Lagos", "Abuya"},         // Nigeria
+            {"Nairobi", "Mombasa"},     // Kenia
+            {"Seúl", "Busan"},          // Corea del Sur
+            {"Yakarta", "Bandung"},     // Indonesia
+            {"Kuala Lumpur", "George Town"},  // Malasia
+            {"Auckland", "Wellington"}, // Nueva Zelanda
+            {"Ámsterdam", "Róterdam"}   // Países Bajos
+    };
 
     public Cassandra() {
 
@@ -54,6 +82,7 @@ public class Cassandra implements DataBase {
 
     @Override
     public void crearDataBase() {
+        /*
         System.out.println("Cargando datos en la BD de cassandra...");
         System.out.println();
         System.out.println("Creando keyspace...");
@@ -77,9 +106,137 @@ public class Cassandra implements DataBase {
         resultSet = session.execute("create index if not exists destino_por_usuario on reservas (cliente_id);");
         resultSet = session.execute("create index if not exists cliente_por_fehcas on reservas (fecha_inicio);");
 
+         */
         /*
+        rellenarDatos();
         resultSet = session.execute("");
          */
+    }
+
+    public void rellenarDatos() {
+        rellenarDestinos();
+        rellenarPaquetes();
+        rellenarClientes();
+        rellenarReservas();
+    }
+
+    public void rellenarDestinos() {
+        session.execute("use cassandrap1;");
+        for (int i = 0; i < 25; i++) {
+            session.execute("insert into destinos (destino_id, nombre, pais, descripcion, clima)" +
+                    "values (uuid(), '" + ciudadesPorPais[i][0] + "', '" + nombresPaises[i] + "', 'Esto es una descripcion', 'Bueno');");
+            session.execute("insert into destinos (destino_id, nombre, pais, descripcion, clima)" +
+                    "values (uuid(), '" + ciudadesPorPais[i][1] + "', '" + nombresPaises[i] + "', 'Esto es una descripcion', 'Malo');");
+
+        }
+    }
+
+    public void rellenarPaquetes() {
+        LinkedList<Destino> listaDestinos = todosLosDestinos();
+        Integer[] duraciones = {10, 20, 30};
+        BigDecimal[] precios = {new BigDecimal(20.34), new BigDecimal(99.99), new BigDecimal(432.98)};
+        session.execute("use cassandrap1;");
+        for (int i = 0; i < 100; i++) {
+            session.execute("insert into paquetes (paquete_id, nombre, destino_id, duracion, precio)" +
+                    "values (uuid(), 'Destino_" + i + "', " + listaDestinos.get(i % 50).getDestino_id() + ", " + duraciones[i % 3] + ", " + precios[i % 3] + " );");
+        }
+    }
+
+    public void rellenarClientes() {
+        Faker faker = new Faker(new Locale("es"));
+        Name name;
+        session.execute("use cassandrap1;");
+        for (int i = 0; i < 200; i++) {
+            name = faker.name();
+            session.execute("insert into clientes (cliente_id, correo_electronico, nombre, telefono)" +
+                    "values (uuid(), '" + name.username() + "@gmail.com', '" + name.firstName() + "', '" + generarNumeroTelefono() + "');");
+        }
+    }
+
+    public static String generarNumeroTelefono() {
+        Random random = new Random();
+        StringBuilder builder = new StringBuilder();
+
+        // Generar el primer dígito (6 o 7)
+        int primerDigito = 6 + random.nextInt(2); // Genera un número aleatorio entre 6 y 7 (inclusive)
+        builder.append(primerDigito);
+
+        // Generar los siguientes 8 dígitos
+        for (int i = 0; i < 8; i++) {
+            builder.append(random.nextInt(10)); // Genera dígitos aleatorios del 0 al 9
+        }
+
+        return builder.toString();
+    }
+
+
+    public void rellenarReservas() {
+        LinkedList<Cliente> listaClientes = todosLosClientes();
+        LinkedList<Paquete> listaPaquetes = todosLosPaquetes();
+        session.execute("use cassandrap1;");
+        for (int i = 0; i < 500; i++) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, -5);
+            Date startDate = cal.getTime(); // Fecha mínima
+
+            cal = Calendar.getInstance();
+            Date endDate = cal.getTime(); // Fecha máxima (fecha actual)
+
+            Random random = new Random();
+            long randomStartMillis = startDate.getTime() + (long) (random.nextDouble() * (endDate.getTime() - startDate.getTime()));
+            cal.setTimeInMillis(randomStartMillis);
+            Date randomStartDate = cal.getTime();
+
+            cal.add(Calendar.DAY_OF_YEAR, random.nextInt(30)); // Agregar días aleatorios para fecha fin
+            Date randomEndDate = cal.getTime();
+
+            String fechaInit= dateFormat.format(randomStartDate);
+            String fechaEnd= dateFormat.format(randomEndDate);
+            if(i%2 == 0){
+                session.execute("insert into reservas (reserva_id, cliente_id, fecha_fin, fecha_inicio, pagado, paquete_id)" +
+                        "VALUES (uuid(), "+listaClientes.get(i%200).getCliente_id()+", '"+fechaEnd+"', '"+fechaInit+"',"+true+","+listaPaquetes.get(i%100).getPaquete_id()+");");
+            }else{
+                session.execute("insert into reservas (reserva_id, cliente_id, fecha_fin, fecha_inicio, pagado, paquete_id)" +
+                        "VALUES (uuid(), "+listaClientes.get(i%200).getCliente_id()+", '"+fechaEnd+"', '"+fechaInit+"',"+false+","+listaPaquetes.get(i%100).getPaquete_id()+");");
+            }
+        }
+    }
+
+    public LinkedList<Paquete> todosLosPaquetes(){
+        LinkedList<Paquete> listaPaquetes= new LinkedList<>();
+        session.execute("use cassandrap1;");
+        String cliente_id = "Select * from paquetes;";
+        ResultSet rs = session.execute(cliente_id);
+        for (Row row : rs) {
+            listaPaquetes.add(
+                    new Paquete(
+                            row.getUUID(0).toString(),
+                            row.getUUID(1).toString(),
+                            row.getInt(2),
+                            row.getString(3),
+                            row.getDecimal(4)
+                    )
+            );
+        }
+        return listaPaquetes;
+    }
+    public LinkedList<Cliente> todosLosClientes() {
+        LinkedList<Cliente> listaClientes = new LinkedList<>();
+        session.execute("use cassandrap1;");
+        ResultSet rs = session.execute( "Select * from clientes ;");
+        for (Row row : rs) {
+            listaClientes.add(
+                    new Cliente(
+                            row.getUUID(0).toString(),
+                            row.getString(1),
+                            row.getString(2),
+                            row.getString(3)
+                    )
+            );
+        }
+        return listaClientes;
     }
 
     @Override
@@ -233,6 +390,11 @@ public class Cassandra implements DataBase {
     }
 
     @Override
+    public LinkedList<Reserva> resservaByClienteRngDate(String cliente_id, String fecha_inicio, String fecha_fin) {
+        return null;
+    }
+
+    @Override
     public LinkedList<Destino> destinosByPais(String pais) {
         LinkedList<Destino> listaDestinos = new LinkedList<Destino>();
         session.execute("use cassandrap1");
@@ -261,9 +423,9 @@ public class Cassandra implements DataBase {
 
     @Override
     public LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, int duracion) {
-        LinkedList <Paquete> listaPaquetes = new LinkedList<Paquete>();
+        LinkedList<Paquete> listaPaquetes = new LinkedList<Paquete>();
         session.execute("use cassandrap1");
-        ResultSet resultSet = session.execute("select * from paquetes where destino_id = "+destino_id+" and duracion = '"+duracion+"' ;");
+        ResultSet resultSet = session.execute("select * from paquetes where destino_id = " + destino_id + " and duracion = '" + duracion + "' ;");
         for (Row row : resultSet) {
             listaPaquetes.add(
                     new Paquete(

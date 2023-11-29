@@ -34,7 +34,7 @@ public class Mongo implements DataBase {
     private MongoClient mongoClient;
     private MongoDatabase db;
     private String[] nombresPaises = {"Estados Unidos", "Canadá", "México", "Brasil", "Argentina", "Reino Unido", "Francia", "Alemania", "Italia", "España", "Portugal", "Australia", "Japón", "China", "India", "Rusia", "Sudáfrica", "Egipto", "Nigeria", "Kenia", "Corea del Sur", "Indonesia", "Malasia", "Nueva Zelanda", "Países Bajos"};
-    String[][] ciudadesPorPais = {{"Nueva York", "Los Ángeles"},// Ciudades para Estados Unidos
+    private String[][] ciudadesPorPais = {{"Nueva York", "Los Ángeles"},// Ciudades para Estados Unidos
             {"Toronto", "Montreal"},// Ciudades para Canadá
             {"Ciudad de México", "Guadalajara"},// Ciudades para México
             {"São Paulo", "Río de Janeiro"},// Ciudades para Brasil
@@ -123,7 +123,6 @@ public class Mongo implements DataBase {
             MongoCollection<Document> collection = db.getCollection("paquetes");
             collection.createIndex(new Document("destino_id", 1).append("duracion",1));
              */
-
 
 
         } catch (Exception e) {
@@ -312,6 +311,34 @@ public class Mongo implements DataBase {
         return listaClientes;
     }
 
+    @Override
+    public LinkedList<Reserva> resservaByClienteRngDate(String cliente_id, String fecha_inicio, String fecha_fin) {
+
+        LinkedList<Reserva> listaReserva = new LinkedList<>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        try {
+            Date fechaInicio = sdf.parse(fecha_inicio);
+            Date fechaFin = sdf.parse(fecha_fin);
+
+            Document query = new Document("fecha_inicio", new Document("$gte", fechaInicio).append("$lte", fechaFin)).append("fecha_fin", new Document("$gte", fechaInicio).append("$lte", fechaFin));
+
+            FindIterable<Document> clientes = db.getCollection("reservas").find(query);
+
+            Iterator<Document> it = clientes.iterator();
+            while (it.hasNext()) {
+                Document doc = it.next();
+                listaReserva.add(
+                        new Reserva(doc.getObjectId("_id").toString(), doc.getString("cliente_id"), doc.getDate("fecha_inicio").toString(), doc.getDate("fecha_fin").toString(), doc.getBoolean("pagado"), doc.getString("paquete_id")
+                        ));
+            }
+        } catch (ParseException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return listaReserva;
+    }
+
     public boolean reservaClimaOk(String paquete_id, String clima) {
         ObjectId objectId;
         try {
@@ -385,7 +412,7 @@ public class Mongo implements DataBase {
         Document filter = new Document("destino_id", destino_id).append("duracion", duracion);
         FindIterable<Document> paquetes = db.getCollection("paquetes").find(filter);
         Iterator<Document> it = paquetes.iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             Document doc = it.next();
             Decimal128 precioDecimal = doc.get("precio", Decimal128.class);
             BigDecimal precio = precioDecimal.bigDecimalValue();
@@ -398,13 +425,13 @@ public class Mongo implements DataBase {
 
     @Override
     public LinkedList<Reserva> reservasByClienteDestinoDuracion(String cliente_id, String destino_id, int duracion) {
-        LinkedList<Reserva>  listaReservas = new LinkedList<>();
-        LinkedList<Reserva>  listaReservasByCliente = reservasByClienteID(cliente_id);
-        LinkedList<Paquete>  listaReservasByDestinoDuracion = paqueteByDestinoDuracion(destino_id, duracion);
+        LinkedList<Reserva> listaReservas = new LinkedList<>();
+        LinkedList<Reserva> listaReservasByCliente = reservasByClienteID(cliente_id);
+        LinkedList<Paquete> listaReservasByDestinoDuracion = paqueteByDestinoDuracion(destino_id, duracion);
         Iterator it = listaReservasByCliente.iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             Reserva rsv = (Reserva) it.next();
-            if( estaEnPaquetes( rsv.getPaquete_id(), listaReservasByDestinoDuracion ) ){
+            if (estaEnPaquetes(rsv.getPaquete_id(), listaReservasByDestinoDuracion)) {
                 listaReservas.add(rsv);
             }
         }
@@ -412,11 +439,11 @@ public class Mongo implements DataBase {
         return listaReservas;
     }
 
-    public boolean estaEnPaquetes(String paquet_id, LinkedList<Paquete> listaPaquetes){
+    public boolean estaEnPaquetes(String paquet_id, LinkedList<Paquete> listaPaquetes) {
         Iterator et = listaPaquetes.iterator();
-        while (et.hasNext()){
+        while (et.hasNext()) {
             Paquete pqt = (Paquete) et.next();
-            if(pqt.getPaquete_id().equals(paquet_id)){
+            if (pqt.getPaquete_id().equals(paquet_id)) {
                 return true;
             }
         }
