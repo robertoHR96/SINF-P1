@@ -228,8 +228,9 @@ public class Main {
 
     public static void opcion7() {
         try {
-
+            cs.reservasPorPaquetes();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error");
         }
     }
@@ -297,8 +298,9 @@ public class Main {
 
     public static void opcion11() {
         try {
-
+            cs.destinosMasPopulares();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error");
         }
     }
@@ -323,7 +325,7 @@ public class Main {
 
     public static void opcion13() {
         try {
-
+            System.out.println("paquete no tiene fechas");
         } catch (Exception e) {
             System.out.println("Error");
         }

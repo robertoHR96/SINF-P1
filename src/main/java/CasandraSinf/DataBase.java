@@ -15,14 +15,19 @@ public interface DataBase {
 
     ///////////////////////////////
 
+
     LinkedList<Paquete> paquetesByNombre(String nombre);
+    void reservasPorPaquetes();
     LinkedList<Cliente> clienteResvervasByClima(String clima);
 
     LinkedList<Reserva> resservaByClienteRngDate(String cliente_id, String fecha_inicio, String fecha_fin);
     LinkedList<Destino> destinosByPais(String pais);
 
 
+
+
     /////////////////////////////
+    void destinosMasPopulares();
     LinkedList<Cliente> clientesByEmail(String mail);
     LinkedList<Paquete> paqueteByDestinoDuracion(String destino_id, int duracion);
     //Generar un índice compuesto para optimizar la búsqueda de reservas por

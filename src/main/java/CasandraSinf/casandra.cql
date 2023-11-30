@@ -97,6 +97,9 @@ create index if not exists cliente_por_fehcas on reservas (fecha_inicio);
 // create index if not exists destino_por_usuario on reservas (cliente_id, (fecha_inicio, fecha_fin));
 
 // juan va a destino mal clima
+insert into reservas_paquetes (reserva_paquete_id, numero_reservas, paquete_id)
+values (uuid(), 5 , 721c17cf-a13e-46b3-9f93-6f99f76621);
+
 insert into reservas (reserva_id, cliente_id, fecha_fin, fecha_inicio, pagado, paquete_id)
 VALUES (uuid(), b6354ef6-0fd4-491d-8211-389af2cebb80, '2023-11-23', '2023-11-13', true,
         9e3d3306-27c8-43fe-a41b-863500f24412);

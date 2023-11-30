@@ -14,7 +14,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Decimal128;
@@ -81,6 +84,53 @@ public class Mongo implements DataBase {
     @Override
     public void crearDataBase() {
 
+        db.getCollection("destinos").drop();
+        db.getCollection("paquetes").drop();
+        db.getCollection("clientes").drop();
+        db.getCollection("reservas").drop();
+        db.getCollection("destinos_populares").drop();
+        db.getCollection("reservas_paquetes").drop();
+
+        db.createCollection("destinos");
+        rellenarDestinos();
+        db.createCollection("paquetes");
+        rellenarPaquetes();
+        db.createCollection("clientes");
+        rellenarClientes();
+        db.createCollection("reservas");
+
+        MongoCollection<Document> collection = db.getCollection("paquetes");
+        collection.createIndex(new Document("destino_id", 1));
+
+        collection = db.getCollection("reservas");
+        collection.createIndex(new Document("cleinte_id", 1));
+        MongoCollection<Document> reservasCollection = db.getCollection("reservas");
+        reservasCollection.createIndex(new Document("cliente_id", 1)
+                .append("fecha_inicio", 1)
+                .append("fecha_fin", 1));
+        reservasCollection.createIndex(
+                new Document("fecha_inicio", 1)
+                        .append("fecha_fin", 1)
+        );
+        db.createCollection("destinos_populares");
+        collection = db.getCollection("destinos_populares");
+        collection.createIndex(new Document("destino_id", 1));
+        rellenarReservas();
+        db.createCollection("reservas_paquetes");
+        rellenarReservasPaquetes();
+
+        collection = db.getCollection("paquetes");
+        collection.createIndex(new Document("nombre", 1));
+
+        collection = db.getCollection("destinos");
+        collection.createIndex(new Document("clima", 1));
+
+        collection = db.getCollection("destinos");
+        collection.createIndex(new Document("pais", 1));
+        collection = db.getCollection("clientes");
+        collection.createIndex(new Document("correo_electronico", 1));
+        collection = db.getCollection("paquetes");
+        collection.createIndex(new Document("destino_id", 1).append("duracion", 1));
     }
 
     @Override
@@ -89,40 +139,6 @@ public class Mongo implements DataBase {
             this.setMongoClient(new MongoClient(node, 27017));
             setDb(mongoClient.getDatabase("mongoSinf"));
             System.out.println("Conectado correctamente a la bd correctamente");
-            /*
-            db.createCollection("destinos");
-            rellenarDestinos();
-            db.createCollection("paquetes");
-            rellenarPaquetes();
-            rellenarClientes();
-            rellenarReservas();
-            MongoCollection<Document> collection = db.getCollection("paquetes");
-            collection.createIndex(new Document("destino_id", 1));
-
-            MongoCollection<Document> collection = db.getCollection("reservas");
-            collection.createIndex(new Document("cleinte_id", 1));
-            MongoCollection<Document> reservasCollection = db.getCollection("reservas");
-            reservasCollection.createIndex(new Document("cliente_id", 1)
-                    .append("fecha_inicio", 1)
-                    .append("fecha_fin", 1));
-            reservasCollection.createIndex(
-                    new Document("fecha_inicio", 1)
-                            .append("fecha_fin", 1)
-            );
-
-            MongoCollection<Document> collection = db.getCollection("paquetes");
-            collection.createIndex(new Document("nombre", 1));
-
-            MongoCollection<Document> collection = db.getCollection("destinos");
-            collection.createIndex(new Document("clima", 1));
-
-            MongoCollection<Document> collection = db.getCollection("destinos");
-            collection.createIndex(new Document("pais", 1));
-            MongoCollection<Document> collection = db.getCollection("clientes");
-            collection.createIndex(new Document("correo_electronico", 1));
-            MongoCollection<Document> collection = db.getCollection("paquetes");
-            collection.createIndex(new Document("destino_id", 1).append("duracion",1));
-             */
 
 
         } catch (Exception e) {
@@ -288,6 +304,19 @@ public class Mongo implements DataBase {
     }
 
     @Override
+    public void reservasPorPaquetes() {
+        FindIterable<Document> reservas_paquetes = db.getCollection("reservas_paquetes").find();
+        Iterator<Document> it = reservas_paquetes.iterator();
+        while (it.hasNext()) {
+            Document doc = it.next();
+            Paquete pq = paqueteByID(doc.getString("paquete_id"));
+            System.out.println("---");
+            System.out.println(pq.toString());
+            System.out.println("Numero reservas: " + doc.getLong("cantidad"));
+        }
+    }
+
+    @Override
     public LinkedList<Cliente> clienteResvervasByClima(String clima) {
         LinkedList<Cliente> listaClientes = new LinkedList<>();
         LinkedList<Reserva> listaReservas = new LinkedList<>();
@@ -391,6 +420,74 @@ public class Mongo implements DataBase {
                     new Destino(doc.getObjectId("_id").toString(), doc.getString("nombre"), doc.getString("pais"), doc.getString("descripcion"), doc.getString("clima")));
         }
         return listaDestinos;
+    }
+
+    @Override
+    public void destinosMasPopulares() {
+        /*
+        MongoCollection<Document> collection = db.getCollection("destinos_populares");
+
+
+        // Agregación para obtener los 10 destino_id más repetidos en orden descendente
+        Document groupStage = new Document("$group", new Document("_id", "destino_id")
+                .append("count", new Document("$sum", 1)));
+        Document sortStage = new Document("$sort", new Document("count", -1));
+        Document limitStage = new Document("$limit", 10);
+
+        // Ejecutar la agregación
+        java.util.List<Document> pipeline = Arrays.asList(groupStage, sortStage, limitStage);
+        java.util.List<Document> results = collection.aggregate(pipeline).into(new java.util.ArrayList<>());
+
+        // Mostrar los resultados
+        System.out.println("Los 10 destino_id más repetidos en orden descendente:");
+        for (Document doc : results) {
+            System.out.println("----");
+            Destino dst = destinoById(doc.getString("destino_id"));
+            if(dst != null){
+                System.out.println(dst.toString());
+            }
+            System.out.println("Repeticiones: " + doc.getInteger("count"));
+        }
+        */
+        MongoCollection<Document> collection = db.getCollection("destinos_populares");
+
+        // Realizar la operación de agregación para contar las repeticiones de cada destino_id
+        List<Bson> pipeline = asList(
+                Aggregates.group("$destino_id", Accumulators.sum("count", 1)),
+                Aggregates.sort(Sorts.descending("count")),
+                Aggregates.limit(10)
+        );
+
+        // Ejecutar la agregación y obtener los resultados
+        List<Document> resultados = collection.aggregate(pipeline).into(
+                new ArrayList<>()
+        );
+
+        // Imprimir los resultados
+        for (Document documento : resultados) {
+            String destinoId = documento.getString("_id");
+            int cantidad = documento.getInteger("count");
+            System.out.println("------");
+            System.out.println(destinoById(destinoId).toString());
+            System.out.println("Numero veces : " + cantidad);
+        }
+    }
+
+    public Destino destinoById(String destino_id) {
+        ObjectId objectId;
+        try {
+            objectId = new ObjectId(destino_id);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        Bson filter = Filters.eq("_id", objectId);
+        FindIterable<Document> paquetes = db.getCollection("destinos").find(filter);
+        Iterator<Document> it = paquetes.iterator();
+        while (it.hasNext()) {
+            Document doc = it.next();
+            return new Destino(doc.getObjectId("_id").toString(), doc.getString("nombre"), doc.getString("pais"), doc.getString("descripcion"), doc.getString("clima"));
+        }
+        return null;
     }
 
     @Override
@@ -519,11 +616,50 @@ public class Mongo implements DataBase {
                 Date randomEndDate = cal.getTime();
 
                 getDb().getCollection("reservas").insertOne(new Document().append("paquete_id", listaPaquetes.get(i % 100).getPaquete_id()).append("cliente_id", listaClientes.get(i % 200).getCliente_id()).append("fecha_inicio", (randomStartDate)).append("fecha_fin", (randomEndDate)).append("pagado", pagados[i % 2]));
+
+                anadirDestinoPopular(listaPaquetes.get(i % 100).getPaquete_id());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public void rellenarReservasPaquetes() {
+        MongoCollection<Document> listaPaquetes = db.getCollection("paquetes");
+        MongoCollection<Document> listaReservas = db.getCollection("reservas");
+        FindIterable<Document> paquetes = listaPaquetes.find();
+        Iterator<Document> it = paquetes.iterator();
+        while (it.hasNext()) {
+            Document doc = it.next();
+            String idPaquete = doc.getObjectId("_id").toString();
+            Document mm = new Document("paquete_id", idPaquete);
+            long cantidad = db.getCollection("reservas").countDocuments(mm);
+            Document dc1 = new Document("paquete_id", idPaquete).append("cantidad", cantidad);
+            db.getCollection("reservas_paquetes").insertOne(dc1);
+        }
+    }
+
+    public void anadirDestinoPopular(String paquete_id) {
+        ObjectId objectId;
+        try {
+            objectId = new ObjectId(paquete_id);
+
+            Document filter = new Document("_id", objectId);
+            FindIterable<Document> paquetes = db.getCollection("paquetes").find(filter);
+            Iterator<Document> paquete = paquetes.iterator();
+            while (paquete.hasNext()) {
+                Document doc = paquete.next();
+                String destino_id = doc.getString("destino_id");
+                anadirDestinoContador(destino_id);
+            }
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void anadirDestinoContador(String destino_id) {
+        getDb().getCollection("destinos_populares").insertOne(new Document("destino_id", destino_id));
+    }
+
 
     public LinkedList<Cliente> todosClientes() {
         LinkedList<Cliente> listaClientes = new LinkedList<Cliente>();

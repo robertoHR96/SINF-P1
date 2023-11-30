@@ -1,6 +1,7 @@
 package CasandraSinf;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -60,57 +61,37 @@ public class Cassandra implements DataBase {
         this.session = session;
     }
 
-    public void createSchema() {
-        session.execute("CREATE KEYSPACE IF NOT EXISTS simplex WITH replication " + "= {'class':'SimpleStrategy', 'replication_factor':1};");
-        session.execute("CREATE TABLE IF NOT EXISTS simplex.songs (" + "id uuid PRIMARY KEY," + "title text," + "album text," + "artist text," + "tags set<text>," + "data blob" + ");");
-        session.execute("CREATE TABLE IF NOT EXISTS simplex.playlists (" + "id uuid," + "title text," + "album text, " + "artist text," + "song_id uuid," + "PRIMARY KEY (id, title, album, artist)" + ");");
-    }
 
-    public void loadData() {
-        session.execute("INSERT INTO simplex.songs (id, title, album, artist, tags) " + "VALUES (" + "756716f7-2e54-4715-9f00-91dcbea6cf50," + "'La Petite Tonkinoise'," + "'Bye Bye Blackbird'," + "'Joséphine Baker'," + "{'jazz', '2013'})" + ";");
-        session.execute("INSERT INTO simplex.playlists (id, song_id, title, album, artist) " + "VALUES (" + "2cc9ccb7-6221-4ccb-8387-f22b6a1b354d," + "756716f7-2e54-4715-9f00-91dcbea6cf50," + "'La Petite Tonkinoise'," + "'Bye Bye Blackbird'," + "'Joséphine Baker'" + ");");
-    }
-
-    public void querySchema() {
-        ResultSet results = session.execute("SELECT * FROM simplex.playlists " + "WHERE id = 2cc9ccb7-6221-4ccb-8387-f22b6a1b354d;");
-        System.out.println(String.format("%-30s\t%-20s\t%-20s\n%s", "title", "album", "artist", "-------------------------------+-----------------------+--------------------"));
-        for (Row row : results) {
-            System.out.println(String.format("%-30s\t%-20s\t%-20s", row.getString("title"), row.getString("album"), row.getString("artist")));
-        }
-        System.out.println();
-    }
 
     @Override
     public void crearDataBase() {
-        /*
         System.out.println("Cargando datos en la BD de cassandra...");
         System.out.println();
         System.out.println("Creando keyspace...");
         System.out.println();
-        ResultSet resultSet = session.execute("create keyspace if not exists cassandraP1 WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};");
-        resultSet = session.execute("use cassandraP1;");
+        session.execute("create keyspace if not exists cassandraP1 WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};");
+        session.execute("use cassandraP1;");
         System.out.println("Crando tablas...");
         System.out.println();
-        resultSet = session.execute("create table if not exists destinos ( destino_id  UUID, nombre text, pais text, descripcion text, clima text, PRIMARY KEY ( destino_id) ); ");
-        resultSet = session.execute("create table if not exists paquetes( paquete_id uuid, nombre text, destino_id uuid, duracion int, precio decimal, PRIMARY KEY ( paquete_id ) ); ");
-        resultSet = session.execute("create table if not exists clientes (cliente_id uuid, nombre text, correo_electronico text, telefono text, primary key ( cliente_id ) ); ");
-        resultSet = session.execute("create table if not exists reservas ( reserva_id uuid, paquete_id uuid, cliente_id uuid, fecha_inicio date, fecha_fin date, pagado boolean, primary key ( reserva_id ) );");
+        session.execute("create table if not exists destinos ( destino_id  UUID, nombre text, pais text, descripcion text, clima text, PRIMARY KEY ( destino_id) ); ");
+        session.execute("create table if not exists paquetes( paquete_id uuid, nombre text, destino_id uuid, duracion int, precio decimal, PRIMARY KEY ( paquete_id ) ); ");
+        session.execute("create table if not exists clientes (cliente_id uuid, nombre text, correo_electronico text, telefono text, primary key ( cliente_id ) ); ");
+        session.execute("create table if not exists reservas ( reserva_id uuid, paquete_id uuid, cliente_id uuid, fecha_inicio date, fecha_fin date, pagado boolean, primary key ( reserva_id ) );");
         System.out.println("Creando indices adicionales...");
         System.out.println("");
-        resultSet = session.execute("create index if not exists destino_clima on destinos (pais);");
-        resultSet = session.execute("create index if not exists destino_clima on destinos (clima);");
+        session.execute("create index if not exists destino_clima on destinos (pais);");
+        session.execute("create index if not exists destino_clima on destinos (clima);");
 
-        resultSet = session.execute("create index if not exists paquetes_por_destinos on paquetes (pais);");
-        resultSet = session.execute("create index if not exists paquetes_por_nombres on paquetes (nombre);");
+        session.execute("create index if not exists paquetes_por_destinos on paquetes (pais);");
+        session.execute("create index if not exists paquetes_por_nombres on paquetes (nombre);");
 
-        resultSet = session.execute("create index if not exists destino_por_usuario on reservas (cliente_id);");
-        resultSet = session.execute("create index if not exists cliente_por_fehcas on reservas (fecha_inicio);");
+        session.execute("create index if not exists destino_por_usuario on reservas (cliente_id);");
+        session.execute("create index if not exists cliente_por_fehcas on reservas (fecha_inicio);");
 
-         */
-        /*
+        session.execute("use cassandraP1;");
+        session.execute("CREATE TABLE if not exists reservas_paquetes (reserva_paquete_id uuid, numero_reservas int, paquete_id text, PRIMARY KEY (reserva_paquete_id));");
+        session.execute("CREATE index if not exists ON reservas (paquete_id);");
         rellenarDatos();
-        resultSet = session.execute("");
-         */
     }
 
     public void rellenarDatos() {
@@ -118,6 +99,7 @@ public class Cassandra implements DataBase {
         rellenarPaquetes();
         rellenarClientes();
         rellenarReservas();
+        rellenarReservasPaquetes();
     }
 
     public void rellenarDestinos() {
@@ -192,20 +174,37 @@ public class Cassandra implements DataBase {
             cal.add(Calendar.DAY_OF_YEAR, random.nextInt(30)); // Agregar días aleatorios para fecha fin
             Date randomEndDate = cal.getTime();
 
-            String fechaInit= dateFormat.format(randomStartDate);
-            String fechaEnd= dateFormat.format(randomEndDate);
-            if(i%2 == 0){
+            String fechaInit = dateFormat.format(randomStartDate);
+            String fechaEnd = dateFormat.format(randomEndDate);
+            if (i % 2 == 0) {
                 session.execute("insert into reservas (reserva_id, cliente_id, fecha_fin, fecha_inicio, pagado, paquete_id)" +
-                        "VALUES (uuid(), "+listaClientes.get(i%200).getCliente_id()+", '"+fechaEnd+"', '"+fechaInit+"',"+true+","+listaPaquetes.get(i%100).getPaquete_id()+");");
-            }else{
+                        "VALUES (uuid(), " + listaClientes.get(i % 200).getCliente_id() + ", '" + fechaEnd + "', '" + fechaInit + "'," + true + "," + listaPaquetes.get(i % 100).getPaquete_id() + ");");
+            } else {
                 session.execute("insert into reservas (reserva_id, cliente_id, fecha_fin, fecha_inicio, pagado, paquete_id)" +
-                        "VALUES (uuid(), "+listaClientes.get(i%200).getCliente_id()+", '"+fechaEnd+"', '"+fechaInit+"',"+false+","+listaPaquetes.get(i%100).getPaquete_id()+");");
+                        "VALUES (uuid(), " + listaClientes.get(i % 200).getCliente_id() + ", '" + fechaEnd + "', '" + fechaInit + "'," + false + "," + listaPaquetes.get(i % 100).getPaquete_id() + ");");
             }
         }
     }
 
-    public LinkedList<Paquete> todosLosPaquetes(){
-        LinkedList<Paquete> listaPaquetes= new LinkedList<>();
+    public void rellenarReservasPaquetes() {
+        session.execute("use cassandraP1;");
+        LinkedList<Paquete> listaPaquetes = todosLosPaquetes();
+        Iterator it = listaPaquetes.iterator();
+        while (it.hasNext()) {
+            Paquete pqt = (Paquete) it.next();
+            ResultSet resultados = session.execute("SELECT paquete_id, COUNT(*) AS numero_reservas FROM reservas WHERE paquete_id = " + pqt.getPaquete_id() + ";");
+            for (Row row : resultados) {
+                BigInteger cont = new BigInteger(String.valueOf(row.getLong("numero_reservas")));
+                if (row.getUUID("paquete_id") != null) {
+                    session.execute("insert into reservas_paquetes (reserva_paquete_id, numero_reservas, paquete_id) values (uuid(), " + cont.intValue() + " , '" + pqt.getPaquete_id() + "');");
+                }
+            }
+        }
+
+    }
+
+    public LinkedList<Paquete> todosLosPaquetes() {
+        LinkedList<Paquete> listaPaquetes = new LinkedList<>();
         session.execute("use cassandrap1;");
         String cliente_id = "Select * from paquetes;";
         ResultSet rs = session.execute(cliente_id);
@@ -222,10 +221,11 @@ public class Cassandra implements DataBase {
         }
         return listaPaquetes;
     }
+
     public LinkedList<Cliente> todosLosClientes() {
         LinkedList<Cliente> listaClientes = new LinkedList<>();
         session.execute("use cassandrap1;");
-        ResultSet rs = session.execute( "Select * from clientes ;");
+        ResultSet rs = session.execute("Select * from clientes ;");
         for (Row row : rs) {
             listaClientes.add(
                     new Cliente(
@@ -362,6 +362,19 @@ public class Cassandra implements DataBase {
     }
 
     @Override
+    public void reservasPorPaquetes() {
+        session.execute("use cassandrap1;");
+        ResultSet result = session.execute(" select * from reservas_paquetes ;");
+        for(Row row: result){
+            Paquete pqt = paqueteByID(row.getString("paquete_id"));
+            int cont = row.getInt("numero_reservas");
+            System.out.println("----------------");
+            System.out.println(pqt.toString());
+            System.out.println("Numero reservas: "+cont);
+        }
+    }
+
+    @Override
     public LinkedList<Cliente> clienteResvervasByClima(String clima) {
         session.execute("use cassandrap1;");
 
@@ -406,6 +419,11 @@ public class Cassandra implements DataBase {
     }
 
     @Override
+    public void destinosMasPopulares() {
+
+    }
+
+    @Override
     public LinkedList<Cliente> clientesByEmail(String mail) {
         LinkedList<Cliente> listaClientes = new LinkedList<Cliente>();
         session.execute("use cassandrap1");
@@ -442,6 +460,7 @@ public class Cassandra implements DataBase {
 
     @Override
     public LinkedList<Reserva> reservasByClienteDestinoDuracion(String cliente_id, String destino_id, int duracion) {
+        System.out.println("Indices compuestos - Error Cassandra");
         return null;
     }
 
