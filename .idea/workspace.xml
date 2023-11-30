@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26e75d27-3dfd-437e-94cf-3292909f1632" name="Changes" comment="Cassandri ultimaConsulta (rellenar y obtener), mongo 100">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,7 +166,8 @@
       <workItem from="1701100368941" duration="15640000" />
       <workItem from="1701159905422" duration="13599000" />
       <workItem from="1701280252125" duration="5574000" />
-      <workItem from="1701336567336" duration="11986000" />
+      <workItem from="1701336567336" duration="12492000" />
+      <workItem from="1701370617628" duration="4003000" />
     </task>
     <task id="LOCAL-00001" summary="Avances">
       <option name="closed" value="true" />
@@ -221,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701348767355</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Cassandri ultimaConsulta (rellenar y obtener), mongo 100">
+      <option name="closed" value="true" />
+      <created>1701360126007</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1701360126007</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -251,9 +263,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java</url>
-          <line>434</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java</url>
+          <line>456</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

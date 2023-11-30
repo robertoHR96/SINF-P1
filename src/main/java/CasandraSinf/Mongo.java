@@ -415,33 +415,7 @@ public class Mongo implements DataBase {
 
     @Override
     public void destinosMasPopulares() {
-        /*
         MongoCollection<Document> collection = db.getCollection("destinos_populares");
-
-
-        // Agregación para obtener los 10 destino_id más repetidos en orden descendente
-        Document groupStage = new Document("$group", new Document("_id", "destino_id")
-                .append("count", new Document("$sum", 1)));
-        Document sortStage = new Document("$sort", new Document("count", -1));
-        Document limitStage = new Document("$limit", 10);
-
-        // Ejecutar la agregación
-        java.util.List<Document> pipeline = Arrays.asList(groupStage, sortStage, limitStage);
-        java.util.List<Document> results = collection.aggregate(pipeline).into(new java.util.ArrayList<>());
-
-        // Mostrar los resultados
-        System.out.println("Los 10 destino_id más repetidos en orden descendente:");
-        for (Document doc : results) {
-            System.out.println("----");
-            Destino dst = destinoById(doc.getString("destino_id"));
-            if(dst != null){
-                System.out.println(dst.toString());
-            }
-            System.out.println("Repeticiones: " + doc.getInteger("count"));
-        }
-        */
-        MongoCollection<Document> collection = db.getCollection("destinos_populares");
-
         // Realizar la operación de agregación para contar las repeticiones de cada destino_id
         List<Bson> pipeline = asList(
                 Aggregates.group("$destino_id", Accumulators.sum("count", 1)),
@@ -453,7 +427,6 @@ public class Mongo implements DataBase {
         List<Document> resultados = collection.aggregate(pipeline).into(
                 new ArrayList<>()
         );
-
         // Imprimir los resultados
         for (Document documento : resultados) {
             String destinoId = documento.getString("_id");
@@ -617,7 +590,6 @@ public class Mongo implements DataBase {
 
     public void rellenarReservasPaquetes() {
         MongoCollection<Document> listaPaquetes = db.getCollection("paquetes");
-        MongoCollection<Document> listaReservas = db.getCollection("reservas");
         FindIterable<Document> paquetes = listaPaquetes.find();
         Iterator<Document> it = paquetes.iterator();
         while (it.hasNext()) {
@@ -625,8 +597,10 @@ public class Mongo implements DataBase {
             String idPaquete = doc.getObjectId("_id").toString();
             Document mm = new Document("paquete_id", idPaquete);
             long cantidad = db.getCollection("reservas").countDocuments(mm);
-            Document dc1 = new Document("paquete_id", idPaquete).append("cantidad", cantidad);
-            db.getCollection("reservas_paquetes").insertOne(dc1);
+            if(cantidad>0){
+                Document dc1 = new Document("paquete_id", idPaquete).append("cantidad", cantidad);
+                db.getCollection("reservas_paquetes").insertOne(dc1);
+            }
         }
     }
 

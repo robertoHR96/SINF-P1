@@ -62,7 +62,6 @@ public class Cassandra implements DataBase {
     }
 
 
-
     @Override
     public void crearDataBase() {
         System.out.println("Cargando datos en la BD de cassandra...");
@@ -71,14 +70,10 @@ public class Cassandra implements DataBase {
         System.out.println();
         session.execute("create keyspace if not exists cassandraP1 WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};");
         session.execute("use cassandraP1;");
-        System.out.println("Crando tablas...");
-        System.out.println();
         session.execute("create table if not exists destinos ( destino_id  UUID, nombre text, pais text, descripcion text, clima text, PRIMARY KEY ( destino_id) ); ");
         session.execute("create table if not exists paquetes( paquete_id uuid, nombre text, destino_id uuid, duracion int, precio decimal, PRIMARY KEY ( paquete_id ) ); ");
         session.execute("create table if not exists clientes (cliente_id uuid, nombre text, correo_electronico text, telefono text, primary key ( cliente_id ) ); ");
         session.execute("create table if not exists reservas ( reserva_id uuid, paquete_id uuid, cliente_id uuid, fecha_inicio date, fecha_fin date, pagado boolean, primary key ( reserva_id ) );");
-        System.out.println("Creando indices adicionales...");
-        System.out.println("");
         session.execute("create index if not exists destino_clima on destinos (pais);");
         session.execute("create index if not exists destino_clima on destinos (clima);");
 
@@ -91,6 +86,9 @@ public class Cassandra implements DataBase {
         session.execute("use cassandraP1;");
         session.execute("CREATE TABLE if not exists reservas_paquetes (reserva_paquete_id uuid, numero_reservas int, paquete_id text, PRIMARY KEY (reserva_paquete_id));");
         session.execute("CREATE index if not exists ON reservas (paquete_id);");
+        session.execute("create table if not exists destinos_populares (destino_popular_id uuid, destino_id text, primary key (destino_popular_id) );");
+        session.execute("create index if not exists on destinos_populares(destino_id);");
+
         rellenarDatos();
     }
 
@@ -100,6 +98,8 @@ public class Cassandra implements DataBase {
         rellenarClientes();
         rellenarReservas();
         rellenarReservasPaquetes();
+
+        rellenarDestinoPopulares();
     }
 
     public void rellenarDestinos() {
@@ -203,10 +203,41 @@ public class Cassandra implements DataBase {
 
     }
 
+    public void rellenarDestinoPopulares() {
+        session.execute("use cassandraP1;");
+        LinkedList<Reserva> listaReservas = todasLasReservas();
+        Iterator it = listaReservas.iterator();
+        while (it.hasNext()) {
+            Reserva rsv = (Reserva) it.next();
+            Paquete pqt = paqueteByID(rsv.getPaquete_id());
+            String destino_id = pqt.getDestino_id();
+            session.execute("insert into destinos_populares (destino_popular_id, destino_id) values (uuid(), '" + destino_id + "' );");
+        }
+    }
+
+    public LinkedList<Reserva> todasLasReservas() {
+        LinkedList<Reserva> listaReservas = new LinkedList<Reserva>();
+        session.execute("use cassandrap1;");
+        String qury = "Select * from reservas;";
+        ResultSet resultSet = session.execute(qury);
+        for (Row row : resultSet) {
+            listaReservas.add(new Reserva(
+                    row.getUUID(0).toString(),
+                    row.getUUID(1).toString(),
+                    row.getDate(2).toString(),
+                    row.getDate(3).toString(),
+                    row.getBool(4),
+                    row.getUUID(5).toString()));
+        }
+        return listaReservas;
+    }
+
+
     public LinkedList<Paquete> todosLosPaquetes() {
         LinkedList<Paquete> listaPaquetes = new LinkedList<>();
         session.execute("use cassandrap1;");
         String cliente_id = "Select * from paquetes;";
+
         ResultSet rs = session.execute(cliente_id);
         for (Row row : rs) {
             listaPaquetes.add(
@@ -365,12 +396,12 @@ public class Cassandra implements DataBase {
     public void reservasPorPaquetes() {
         session.execute("use cassandrap1;");
         ResultSet result = session.execute(" select * from reservas_paquetes ;");
-        for(Row row: result){
+        for (Row row : result) {
             Paquete pqt = paqueteByID(row.getString("paquete_id"));
             int cont = row.getInt("numero_reservas");
             System.out.println("----------------");
             System.out.println(pqt.toString());
-            System.out.println("Numero reservas: "+cont);
+            System.out.println("Numero reservas: " + cont);
         }
     }
 
@@ -420,7 +451,42 @@ public class Cassandra implements DataBase {
 
     @Override
     public void destinosMasPopulares() {
-
+        try {
+            session.execute("use cassandrap1");
+            // Ejecutar la consulta
+            ResultSet rs = session.execute("SELECT destino_id from destinos_populares");
+            HashMap<String, Integer> destinosContador = new HashMap<>();
+            // Iterar a través de los resultados
+            // y rellenamos el hashmap
+            for (Row row : rs) {
+                String destinoId = row.getString("destino_id");
+                if (destinosContador.containsKey(destinoId)) {
+                    int cantidad = destinosContador.get(destinoId);
+                    cantidad++;
+                    destinosContador.put(destinoId, cantidad);
+                } else {
+                    destinosContador.put(destinoId, 0);
+                }
+            }
+            // recorremos le has map para mostar los resultados
+            for (Map.Entry<String, Integer> entry : destinosContador.entrySet()) {
+                String destino_id = entry.getKey();
+                int cantidad = entry.getValue();
+                Destino dst = destinoById(destino_id);
+                System.out.println("----");
+                System.out.println(dst.toString());
+                System.out.println("Numero veces: "+cantidad);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public Destino destinoById(String destino_id){
+        session.execute("use cassandrap1");
+        // Ejecutar la consulta
+        ResultSet rs = session.execute("SELECT * from destinos where destino_id = "+destino_id);
+        Row row = rs.one();
+        return new Destino(row.getUUID(0).toString(), row.getString(3), row.getString(4), row.getString(2), row.getString(1));
     }
 
     @Override
