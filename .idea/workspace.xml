@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26e75d27-3dfd-437e-94cf-3292909f1632" name="Changes" comment="Cassandri 99, mongo 99">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/cb8a7b29-8340-4be3-8ff0-0b0fe2365c29.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Cassandra.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/DataBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/DataBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Main.java" afterDir="false" />
+    <list default="true" id="26e75d27-3dfd-437e-94cf-3292909f1632" name="Changes" comment="Cassandri ultimaConsulta (rellenar y obtener), mongo 100">
       <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CasandraSinf/casandra.cql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CasandraSinf/casandra.cql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +163,7 @@
       <workItem from="1701100368941" duration="15640000" />
       <workItem from="1701159905422" duration="13599000" />
       <workItem from="1701280252125" duration="5574000" />
-      <workItem from="1701336567336" duration="11325000" />
+      <workItem from="1701336567336" duration="11986000" />
     </task>
     <task id="LOCAL-00001" summary="Avances">
       <option name="closed" value="true" />
@@ -219,7 +213,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701286048338</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Cassandri ultimaConsulta (rellenar y obtener), mongo 100">
+      <option name="closed" value="true" />
+      <created>1701348767355</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701348767355</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -242,14 +244,15 @@
     <MESSAGE value="Cassandri 99, mongo rellenar 2" />
     <MESSAGE value="Cassandri 99, mongo casi fin" />
     <MESSAGE value="Cassandri 99, mongo 99" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cassandri 99, mongo 99" />
+    <MESSAGE value="Cassandri ultimaConsulta (rellenar y obtener), mongo 100" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cassandri ultimaConsulta (rellenar y obtener), mongo 100" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/CasandraSinf/Mongo.java</url>
-          <line>443</line>
+          <line>434</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>

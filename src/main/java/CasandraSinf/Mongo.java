@@ -102,8 +102,7 @@ public class Mongo implements DataBase {
         MongoCollection<Document> collection = db.getCollection("paquetes");
         collection.createIndex(new Document("destino_id", 1));
 
-        collection = db.getCollection("reservas");
-        collection.createIndex(new Document("cleinte_id", 1));
+        db.getCollection("reservas").createIndex(new Document("cleinte_id", 1));
         MongoCollection<Document> reservasCollection = db.getCollection("reservas");
         reservasCollection.createIndex(new Document("cliente_id", 1)
                 .append("fecha_inicio", 1)
@@ -113,24 +112,16 @@ public class Mongo implements DataBase {
                         .append("fecha_fin", 1)
         );
         db.createCollection("destinos_populares");
-        collection = db.getCollection("destinos_populares");
-        collection.createIndex(new Document("destino_id", 1));
+        db.getCollection("destinos_populares").createIndex(new Document("destino_id", 1));
         rellenarReservas();
         db.createCollection("reservas_paquetes");
         rellenarReservasPaquetes();
 
-        collection = db.getCollection("paquetes");
-        collection.createIndex(new Document("nombre", 1));
-
-        collection = db.getCollection("destinos");
-        collection.createIndex(new Document("clima", 1));
-
-        collection = db.getCollection("destinos");
-        collection.createIndex(new Document("pais", 1));
-        collection = db.getCollection("clientes");
-        collection.createIndex(new Document("correo_electronico", 1));
-        collection = db.getCollection("paquetes");
-        collection.createIndex(new Document("destino_id", 1).append("duracion", 1));
+        db.getCollection("paquetes").createIndex(new Document("nombre", 1));
+        db.getCollection("destinos").createIndex(new Document("clima", 1));
+        db.getCollection("destinos").createIndex(new Document("pais", 1));
+        db.getCollection("clientes").createIndex(new Document("correo_electronico", 1));
+        db.getCollection("paquetes").createIndex(new Document("destino_id", 1).append("duracion", 1));
     }
 
     @Override
