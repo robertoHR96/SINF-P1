@@ -48,7 +48,7 @@ El proyecto se organiza en varios paquetes:
 
 - `CasandraSinf`: Contiene la interfaz `DataBase`, las clases para interactuar con la base de datos y los modelos de datos (`Cliente`, `Destino`, `Paquete`, `Reserva`).
 - `Main`: Clase principal que gestiona la interfaz de consola y las opciones del menú.
-- `Mongo`, `_Mongo`: Clases para manejar la conexión y operaciones específicas para MongoDB.
+- `Mongo`: Clases para manejar la conexión y operaciones específicas para MongoDB.
 - `Cassandra`: Clase para manejar la conexión y operaciones específicas para Cassandra.
 
 ## Contribución
